@@ -2,4 +2,18 @@
 
 {% block content %}
 
+<form  action="/login" method="POST" class="form">
+    {% csrf_token %}
+    <h1>Please login</h1>
+    {{ login_form.as_p }}
+    <button type="submit" class="btn">Submit</button>
+</form>
+
+<form action="/register" method="POST" class="form">
+    {% csrf_token %}
+    <h1>Please register</h1>
+    {{ reg_form.as_p }}
+    <button type="submit" class="btn">Submit</button>
+</form>
+
 {% endblock %}

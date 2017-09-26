@@ -30,9 +30,13 @@ def to_login(request):
         password = login_form.cleaned_data.get('password')
         user = authenticate(username=username, password=password)
         login(request, user)
-        # return redirect('login_register:index')
-        return HttpResponse('hi!')
+        return redirect('reviews:index')
     return render(request, 'login_register/index.html', context)
+
+
+def to_logout(request):
+    logout(request)
+    return redirect('login_register:index')
 
 
 def to_register(request):
@@ -49,7 +53,6 @@ def to_register(request):
         new_user.save()
         log_new_user = authenticate(username=new_user.username, password=password)
         login(request, log_new_user)
-        # return redirect('login_register:index')
-        return HttpResponse('hey! registered')
+        return redirect('reviews:index')
     return render(request, 'login_register/index.html', context)
 

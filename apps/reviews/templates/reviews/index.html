@@ -11,7 +11,7 @@
     <h3>
         <a href="{% url 'reviews:add_book' %}">Add a book and review!</a>
     </h3>
-    
+
     {% for review in all_reviews %}
     <ul>
         <li>
@@ -19,7 +19,39 @@
                 {{ review.book.title }}
             </a>
         </li>
-        <li>{{ review.rating }}</li>
+        <li>
+            {% if review.rating == 1 %}
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            {% elif review.rating == 2 %}
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            {% elif review.rating == 3 %}
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            {% elif review.rating == 4 %}
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            {% endif %}
+        </li>
         <li>
             <a href="{% url 'reviews:user_detail' user_id=review.user.id %}">
                 {{ review.user.first_name.title }}

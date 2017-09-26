@@ -8,8 +8,14 @@ from django.utils import timezone
 
 
 # Create your models here.
+class Author(models.Model):
+    first_name = models.CharField(max_length=25)
+    last_name = models.CharField(max_length=25)
+
+
 class Book(models.Model):
     title = models.TextField(max_length=140)
+    author = models.ManyToManyField(Author, related_name='books')
     
 
 class Review(models.Model):

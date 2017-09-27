@@ -6,14 +6,25 @@ User = get_user_model()
 
 
 class UserLoginForm(forms.Form):
+    """
+    " use the following to use EMAIL to sign in
+    ' email = forms.EmailField()
+    """
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
     def clean(self, *arg, **kwargs):
+        """"
+        " email = self.cleaned_data.get('email')
+        """
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
 
         if username and password:
+            """
+            " if email and password:
+            " username = User.objects.get(email=email).username
+            """
             user_auth = authenticate(username=username, password=password)
             user_query = User.objects.filter(username=username)
             if not user_query.exists():
@@ -29,7 +40,9 @@ class UserLoginForm(forms.Form):
 
 class UserRegistrationForm(forms.ModelForm):
     email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput, 
+                               min_length=8,
+                               help_text='At least 8 digits long.')
     confirm_password = forms.CharField(widget=forms.PasswordInput,
                                        label='Confirm Password',)
 

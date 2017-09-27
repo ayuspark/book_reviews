@@ -26,8 +26,16 @@ def to_login(request):
         'reg_form': reg_form,
     }
     if login_form.is_valid():
+        """
+        " use the following if using EMAIL to sign in
+        " email = login_form.cleaned_data.get('email')
+        """
         username = login_form.cleaned_data.get('username')
         password = login_form.cleaned_data.get('password')
+        user_model = get_user_model()
+        """
+        " username = user_model.objects.get(email=email).username
+        """
         user = authenticate(username=username, password=password)
         login(request, user)
         return redirect('reviews:index')

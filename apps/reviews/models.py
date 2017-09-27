@@ -11,11 +11,17 @@ from django.utils import timezone
 class Author(models.Model):
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
-
+    
+    def __str__(self):
+        name = self.first_name.title() + ' ' + self.last_name.title()
+        return name
 
 class Book(models.Model):
-    title = models.TextField(max_length=140)
-    author = models.ManyToManyField(Author, related_name='books')
+    title = models.CharField(max_length=140)
+    authors = models.ManyToManyField(Author, related_name='books')
+
+    def __str__(self):
+        return self.title
     
 
 class Review(models.Model):

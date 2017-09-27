@@ -2,6 +2,12 @@
 
 {% block content %}
 
-
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ book_form.as_p }}
+    {{ select_author_form.as_p }}
+    {{ review_form.as_p }}
+    <input type="submit" class="btn" value="Submit" />
+</form>
 
 {% endblock %}

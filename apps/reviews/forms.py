@@ -10,77 +10,36 @@ class BookForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        fields = '__all__'
+        fields = ('title',)
 
 
-class AuthorForm(forms.ModelForm):
+# class AuthorForm(forms.ModelForm):
 
-    class Meta:
-        model = Author
-        fields = '__all__'
+#     class Meta:
+#         model = Author
+#         fields = ('first_name', 'last_name')
+#         labels = {
+#             # 'first_name': 'Or add an author',
+#             # 'last_name': ''
+#         }
+#         widgets = {
+#             'first_name': forms.TextInput(attrs={'placeholder': 'first name'}),
+#             'last_name': forms.TextInput(attrs={'placeholder': 'last name'})
+#         }
+
+
+class SelectAuthorForm(forms.Form):
+    choose_author = forms.ModelChoiceField(queryset=Author.objects.all().order_by('first_name'),
+                                           label='Select an author')
 
 
 class ReviewForm(forms.ModelForm):
+    rating = forms.ChoiceField(choices=[(x, x) for x in range(1, 6)])
 
     class Meta:
         model = Review
-        fields = ('rating', 'comment',)
+        fields = ('comment', 'rating')
         widgets = {
-            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': '3'}),
-        # manually fill in other fields upon form submit
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': '3'})
+        }
 
-
-
-
-
-# class SignInForm(forms.Form):
-#     email = forms.EmailField()
-#     psw = forms.CharField(widget=forms.PasswordInput,
-#                           label='Password')
-
-
-# class RegisterForm(forms.ModelForm):
-#     psw = forms.CharField(widget=forms.PasswordInput,
-#                           label='Password',)
-#     confirm_psw = forms.CharField(widget=forms.PasswordInput,
-#                                   label='Confirm Password',)
-
-#     class Meta:
-#         model = MyUser
-#         exclude = ['is_admin']
-
-#     def clean(self):
-#         cleaned_data = super(RegisterForm, self).clean()
-#         psw = cleaned_data.get('psw')
-#         confirm_psw = cleaned_data.get('confirm_psw')
-
-#         if psw != confirm_psw:
-#             msg = 'Password does not match'
-#             return self.add_error('confirm_psw', msg)
-
-
-# class MessageForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Message
-#         fields = ('msg',)
-#         labels = {
-#             'msg': '',
-#         }
-#         widgets = {
-#             'msg': forms.Textarea(attrs={'class': 'form-control', 'rows': '3'}),
-#         }
-#         # manually fill in other fields upon form submit
-
-
-# class CommentForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Comment
-#         fields = ('comment',)
-#         widgets = {
-#             'comment': forms.Textarea(attrs={'class': 'form-control',
-#                                              'rows': '1',
-#                                              'id': '', }),
-#         }
-#         # manually fill in other fields upon form submit

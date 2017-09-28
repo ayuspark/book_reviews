@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import *
@@ -21,26 +22,41 @@ def index(request):
 
 
 def book_detail(request, book_id):
-    # book_query = Book.objects.get(pk=book_id)
     book_query = get_object_or_404(Book, pk=book_id)
+    review_form = ReviewForm(request.POST or None)
     context = {
         'book_query': book_query,
         'book_id': book_id,
+        'review_form': review_form,
     }
     return render(request, 'reviews/book_detail.html', context)
+
+
+@login_required(login_url='/')
+def book_add_review(request, book_id):
+    review_form = ReviewForm(request.POST or None)
+    if review_form.is_valid():
+        book_query = Book.objects.get(id=book_id)
+        new_review = review_form.save(commit=False)
+        new_review.user = get_object_or_404(User, pk=request.user.id)
+        new_review.book = book_query
+        new_review.save()
+        return redirect('reviews:book_detail', book_id=book_id)
 
 
 @login_required(login_url='/')
 def add_book(request):
     book_form = BookForm(request.POST or None)
     select_author_form = SelectAuthorForm(request.POST or None)
+    create_author_form = AuthorForm(request.POST or None)
     review_form = ReviewForm(request.POST or None)
     context = {
         'book_form': book_form,
         'select_author_form': select_author_form,
+        'create_author_form': create_author_form,
         'review_form': review_form,
     }
-    if book_form.is_valid() and select_author_form.is_valid() and review_form.is_valid():
+    if book_form.is_valid() and review_form.is_valid():
         # check if book exists
         new_book = book_form.save(commit=False)
         try:
@@ -50,7 +66,22 @@ def add_book(request):
             book_query = Book.objects.get(title__iexact=new_book.title)
 
         # query author to add to the new book
-        author_object = select_author_form.cleaned_data.get('choose_author')
+        # either select or create and author
+        if select_author_form.has_changed() and select_author_form.is_valid() and not create_author_form.has_changed():
+            author_object = select_author_form.cleaned_data.get('choose_author')
+        elif create_author_form.has_changed() and create_author_form.is_valid() and not select_author_form.has_changed():
+            first_name = create_author_form.cleaned_data.get('first_name')
+            last_name = create_author_form.cleaned_data.get('last_name')
+            # check if entered author exists
+            if Author.objects.filter(first_name__iexact=first_name).filter(last_name__iexact=last_name):
+                messages.error(request, 'Author exists, please select from the list.')
+                return redirect('reviews:add_book')
+            else:
+                author_object = Author.objects.create(first_name=first_name, last_name=last_name)
+        else:
+            messages.error(request, 'You can either select or create an author.')
+            return redirect('reviews:add_book')
+
         first_name = author_object.first_name
         last_name = author_object.last_name
         author_query = Author.objects.filter(first_name__iexact=first_name).filter(last_name__iexact=last_name)
@@ -68,8 +99,17 @@ def add_book(request):
     return render(request, 'reviews/add_new.html', context)
 
 
+@login_required(login_url='/')
 def user_detail(request, user_id):
-    pass
+    user_query = get_object_or_404(User, id=user_id)
+    reviews_query = user_query.reviews.all()
+    reviews_query_count = reviews_query.count()
+    context = {
+        'user_query': user_query,
+        'reviews_query': reviews_query,
+        'reviews_query_count': reviews_query_count,
+    }
+    return render(request, 'reviews/user_detail.html', context)
 
 
 @login_required(login_url='/')

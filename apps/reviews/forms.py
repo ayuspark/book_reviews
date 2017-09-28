@@ -13,24 +13,23 @@ class BookForm(forms.ModelForm):
         fields = ('title',)
 
 
-# class AuthorForm(forms.ModelForm):
+class AuthorForm(forms.ModelForm):
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
 
-#     class Meta:
-#         model = Author
-#         fields = ('first_name', 'last_name')
-#         labels = {
-#             # 'first_name': 'Or add an author',
-#             # 'last_name': ''
-#         }
-#         widgets = {
-#             'first_name': forms.TextInput(attrs={'placeholder': 'first name'}),
-#             'last_name': forms.TextInput(attrs={'placeholder': 'last name'})
-#         }
+    class Meta:
+        model = Author
+        fields = ('first_name', 'last_name')
+        widgets = {
+            'first_name': forms.TextInput(attrs={'placeholder': 'first name'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'last name'})
+        }
 
 
 class SelectAuthorForm(forms.Form):
     choose_author = forms.ModelChoiceField(queryset=Author.objects.all().order_by('first_name'),
-                                           label='Select an author')
+                                           label='Select an author',
+                                           required=False)
 
 
 class ReviewForm(forms.ModelForm):

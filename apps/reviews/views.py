@@ -11,8 +11,7 @@ from .forms import *
 
 # Create your views here.
 def index(request):
-    all_reviews = Review.objects.all().order_by(
-        '-created_date')[:5]
+    all_reviews = Review.objects.all().order_by('-created_date')[:5]
     books_with_reviews = Book.objects.exclude(reviews__isnull=True)
     context = {
         'all_reviews': all_reviews,

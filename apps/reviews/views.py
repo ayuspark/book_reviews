@@ -67,7 +67,7 @@ def add_book(request):
         # query author to add to the new book
         # either select or create and author
         if select_author_form.has_changed() and select_author_form.is_valid() and not create_author_form.has_changed():
-            author_object = select_author_form.cleaned_data.get('choose_author')
+            author_query = select_author_form.cleaned_data.get('choose_author')
         elif create_author_form.has_changed() and create_author_form.is_valid() and not select_author_form.has_changed():
             first_name = create_author_form.cleaned_data.get('first_name')
             last_name = create_author_form.cleaned_data.get('last_name')
@@ -76,16 +76,13 @@ def add_book(request):
                 messages.error(request, 'Author exists, please select from the list.')
                 return redirect('reviews:add_book')
             else:
-                author_object = Author.objects.create(first_name=first_name, last_name=last_name)
+                author_query = Author.objects.create(first_name=first_name, last_name=last_name)
         else:
             messages.error(request, 'You can either select or create an author.')
             return redirect('reviews:add_book')
 
-        first_name = author_object.first_name
-        last_name = author_object.last_name
-        author_query = Author.objects.filter(first_name__iexact=first_name).filter(last_name__iexact=last_name)
         # add author to book
-        book_query.authors.add(author_query.first())
+        book_query.authors.add(author_query)
         
         # add review
         new_review = review_form.save(commit=False)
